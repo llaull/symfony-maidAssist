@@ -2,6 +2,7 @@
 
 namespace App\Controller\Admin;
 
+use App\Entity\Intervention;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -47,7 +48,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Show User', 'fas fa-eye', User::class)
         ]);
 
-        
+        yield MenuItem::section('Interventions');
 
+        yield MenuItem::linkToCrud('Show All interventions', 'fas fa-table', Intervention::class);
     }
 }
