@@ -21,10 +21,10 @@
         {% for intervention in interventions %}
             <tr>
                 <td>{{ intervention.id }}</td>
-                <td>{{ intervention.date ? intervention.date|date('Y-m-d') : '' }}</td>
-                <td>{{ intervention.startAt ? intervention.startAt|date('H:i:s') : '' }}</td>
-                <td>{{ intervention.duration }}</td>
-                <td>{{ intervention.stopAt ? intervention.stopAt|date('H:i:s') : '' }}</td>
+                <td>{{ intervention.date ? intervention.date|date('d-m-Y') : '' }}</td>
+                <td>{{ intervention.startAt ? intervention.startAt|date('H:i') : '' }}</td>
+                <td>{{ intervention.duration }} Hours</td>
+                <td>{{ intervention.stopAt ? intervention.stopAt|date('H:i') : '' }}</td>
                 <td>{{ intervention.donePaid ? 'Yes' : 'No' }}</td>
                 <td>
                     <a href="{{ path('app_intervention_show', {'id': intervention.id}) }}">show</a>

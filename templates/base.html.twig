@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html id="theme" data-theme="dark">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,25 +18,13 @@
 			{{ encore_entry_script_tags('app') }}
 		{% endblock %}
 	</head>
-	<body></body>
-</html>
-<html id="theme" data-theme="dark">
+	<body>
 
-	<main class="container">
-		<nav>
-			<ul>
-				<li>
-					<i class="fas fa-head-side-virus"></i> <strong>Maid assist</strong>
-				</li>
-			</ul>
-			<ul>
-				<li><a href="{{ path('app_home') }}">home</a></li>
-				<li><a href="{{ path('app_intervention_index') }}">My intervention</a></li>
-				<li><a href="{{ path('app_customer_index') }}">My customers</a></li>
-				<li><a href="#">My finances</a></li>
-				<li><a href="{{ path('admin') }}"><i class="fas fa-user"></i></a></li>
-			</ul>
-		</nav>
-		{% block body %}{% endblock %}
-	</main>
-</html></body></html>
+		{% include '__menu.html.twig' %}
+		<main class="container"> {% block body %}{% endblock %}
+			</main>
+					{% include '__footer.html.twig' %}
+
+			</body>
+	</html>
+</html>

@@ -30,6 +30,9 @@ class Customer
     #[ORM\OneToMany(mappedBy: 'customer', targetEntity: Intervention::class)]
     private $interventions;
 
+    #[ORM\Column(type: 'datetime_immutable')]
+    private $createdAt;
+
     public function __construct()
     {
         $this->interventions = new ArrayCollection();
@@ -122,6 +125,18 @@ class Customer
                 $intervention->setCustomer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = new \DateTimeImmutable();
 
         return $this;
     }

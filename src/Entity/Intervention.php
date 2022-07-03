@@ -22,7 +22,7 @@ class Intervention
     #[ORM\Column(type: 'date')]
     private $date;
 
-    #[ORM\Column(type: 'time')]
+    #[ORM\Column(type: 'time', nullable: true)]
     private $startAt;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -39,6 +39,9 @@ class Intervention
 
     #[ORM\ManyToOne(targetEntity: customer::class, inversedBy: 'interventions')]
     private $customer;
+
+    #[ORM\Column(type: 'datetime_immutable')]
+    private $createdAt;
 
     public function getId(): ?int
     {
@@ -125,6 +128,18 @@ class Intervention
     public function setCustomer(?customer $customer): self
     {
         $this->customer = $customer;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
