@@ -2,24 +2,71 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Controller\CreateBookPublication;
 use App\Repository\InterventionRepository;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Customer;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
+#[ApiResource(
+    itemOperations: [
+        'get' => [
+            // 'normalization_context' => ['collection']
+        ]
+        // 'delete', 
+        // 'put'
+    ],
+    collectionOperations: [
+        'get',
+        // 'post'
+    ],
+    attributes: [
+        'pagination_enabled' => false
+    ]
+)]
+#[ApiFilter(SearchFilter::class, properties: [
+    'duration' => SearchFilter::STRATEGY_EXACT,
+    'user'=> SearchFilter::STRATEGY_EXACT,
+])]
+#[ApiFilter(
+    OrderFilter::class,
+    properties: [
+        'duration',
+        'date',
+        'startAt',
+        'user'
+    ]
+)]
+// #[ApiResource(itemOperations: [
+//         'get','put'
+//         ])]
+// #[ApiResource(itemOperations: [
+//     'get',
+//     'post_publication' => [
+//         'method' => 'POST',
+//         'path' => '/books/{id}/publication',
+//         'controller' => CreateBookPublication::class,
+//     ],
+// ])]
 class Intervention
 {
     public function __construct()
     {
         $this->date = new \DateTime();
     }
-    
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
+    #[Groups(['collection'])]
     private $id;
 
     #[ORM\Column(type: 'date')]
+    #[Groups(['collection'])]
     private $date;
 
     #[ORM\Column(type: 'time', nullable: true)]
@@ -35,9 +82,11 @@ class Intervention
     private $donePaid;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'intervention')]
+    #[Groups(['collection'])]
     private $user;
 
-    #[ORM\ManyToOne(targetEntity: customer::class, inversedBy: 'interventions')]
+    #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'interventions')]
+    #[Groups(['collection'])]
     private $customer;
 
     #[ORM\Column(type: 'datetime_immutable')]

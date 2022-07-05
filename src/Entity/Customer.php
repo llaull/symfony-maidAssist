@@ -2,12 +2,27 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
+#[ApiResource(
+    itemOperations: [
+        'get', 
+        // 'delete', 
+        // 'put'
+    ],
+    collectionOperations: [
+        'get', 
+        // 'post'
+    ],
+    attributes: [
+        'pagination_enabled' => false
+    ]
+)]
 class Customer
 {
     #[ORM\Id]
