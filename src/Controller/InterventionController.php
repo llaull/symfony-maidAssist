@@ -6,6 +6,7 @@ use App\Entity\Intervention;
 use App\Form\InterventionType;
 use App\Repository\InterventionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -13,11 +14,20 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/intervention')]
 class InterventionController extends AbstractController
 {
-    #[Route('/', name: 'app_intervention_index', methods: ['GET'])]
-    public function index(InterventionRepository $interventionRepository): Response
+    #[Route('/{page}', name: 'app_intervention_index', methods: ['GET'])]
+    public function index(InterventionRepository $interventionRepository, $page = 1): Response
     {
+
+        $count = $interventionRepository->count([]);
+        $totalPage = ceil($count / 20);
+        if ($totalPage < $page) {
+            return $this->redirectToRoute('app_intervention_index');
+        }
+        $offset = ($page - 1) * 20;
+
+        $interventions = $interventionRepository->findAll([], null, 20, $offset);
         return $this->render('intervention/index.html.twig', [
-            'interventions' => $interventionRepository->findAll(),
+            'interventions' => $interventions,
         ]);
     }
 
@@ -70,7 +80,7 @@ class InterventionController extends AbstractController
     #[Route('/{id}', name: 'app_intervention_delete', methods: ['POST'])]
     public function delete(Request $request, Intervention $intervention, InterventionRepository $interventionRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$intervention->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $intervention->getId(), $request->request->get('_token'))) {
             $interventionRepository->remove($intervention, true);
         }
 

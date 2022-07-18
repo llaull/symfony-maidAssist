@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello ChartjsController!
+{% endblock %}
+
+{% block body %}
+
+	<article class="grid nopad" style="padding:0">
+		<div>
+			<hgroup>
+				<h1>test</h1>
+				<h2></h2>
+			</hgroup>
+
+			{{ render_chart(chart) }}
+		</div>
+	</article>
+
+{% endblock %}

@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Customer;
 use App\Entity\Intervention;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,28 +41,43 @@ class InterventionRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Intervention[] Returns an array of Intervention objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('i.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Intervention[] Returns an array of Intervention objects
+     */
+    public function getCountIntervention($value): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('count(i.id)')
+            ->andWhere('i.user = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getSingleResult();
+    }
+    /**
+     * @return Intervention[] Returns an array of Intervention objects
+     */
+    public function getCountInterventionByMonth(User $user, $customer = NULL ): array
+    {
+        return $this->createQueryBuilder('i')
+            ->select('count(i.id) as nbIntervention, MONTH(i.date) AS month')
+            ->andWhere('i.user = :val')
+            ->andWhere('i.customer = :custo')
+            ->setParameter('val', $user)
+            ->setParameter('custo', $customer)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            // ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Intervention
-//    {
-//        return $this->createQueryBuilder('i')
-//            ->andWhere('i.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Intervention
+    //    {
+    //        return $this->createQueryBuilder('i')
+    //            ->andWhere('i.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

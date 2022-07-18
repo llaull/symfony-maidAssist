@@ -7,6 +7,10 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 #[ApiResource(
@@ -23,6 +27,9 @@ use Doctrine\ORM\Mapping as ORM;
         'pagination_enabled' => false
     ]
 )]
+#[ApiFilter(SearchFilter::class, properties: [
+    'user'=> SearchFilter::STRATEGY_EXACT,
+])]
 class Customer
 {
     #[ORM\Id]
@@ -31,6 +38,7 @@ class Customer
     private $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Groups(['clients'])]
     private $Name;
 
     #[ORM\Column(type: 'string', length: 255, nullable: true)]

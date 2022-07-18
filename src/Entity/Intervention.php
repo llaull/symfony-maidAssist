@@ -4,19 +4,26 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Controller\CreateBookPublication;
 use App\Repository\InterventionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Context;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 
 #[ORM\Entity(repositoryClass: InterventionRepository::class)]
+
+
+
 #[ApiResource(
+    normalizationContext: ['groups' => ['clients']],
     itemOperations: [
-        'get' => [
-            // 'normalization_context' => ['collection']
-        ]
+        'get',
+        //  => [            // 'normalization_context' => ['groups' => ['client']]        ]
         // 'delete', 
         // 'put'
     ],
@@ -25,20 +32,26 @@ use Symfony\Component\Serializer\Annotation\Groups;
         // 'post'
     ],
     attributes: [
-        'pagination_enabled' => false
+        'pagination_enabled' => false,
+        // "pagination_items_per_page" => 1
     ]
 )]
 #[ApiFilter(SearchFilter::class, properties: [
     'duration' => SearchFilter::STRATEGY_EXACT,
     'user'=> SearchFilter::STRATEGY_EXACT,
+    // 'date',SearchFilter::STRATEGY_EXACT,
 ])]
+// #[ApiFilter(DateFilter::class, properties: ['date'])]
+// #[ApiResource(attributes: ["pagination_items_per_page" => 1])]
+// #[ApiFilter(RangeFilter::class, properties: ["date"])]
+
 #[ApiFilter(
     OrderFilter::class,
     properties: [
-        'duration',
+        // 'duration',
         'date',
-        'startAt',
-        'user'
+        // 'startAt',
+        // 'user'
     ]
 )]
 // #[ApiResource(itemOperations: [
@@ -62,17 +75,21 @@ class Intervention
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
-    #[Groups(['collection'])]
+    #[Groups("clients")]
     private $id;
 
     #[ORM\Column(type: 'date')]
-    #[Groups(['collection'])]
+    #[Groups("clients")]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'd/m/yy'])]
     private $date;
 
     #[ORM\Column(type: 'time', nullable: true)]
+    #[Groups("clients")]
+    #[Context([DateTimeNormalizer::FORMAT_KEY => 'H:i:s'])]
     private $startAt;
 
     #[ORM\Column(type: 'integer', nullable: true)]
+    #[Groups("clients")]
     private $duration;
 
     #[ORM\Column(type: 'time', nullable: true)]
@@ -82,15 +99,20 @@ class Intervention
     private $donePaid;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'intervention')]
-    #[Groups(['collection'])]
+    #[Groups("clients")]
     private $user;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'interventions')]
-    #[Groups(['collection'])]
+    #[Groups("clients")]
     private $customer;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private $createdAt;
+
+    #[Groups("clients")]
+    public function getMyJobs(){
+        return $this->getDuration() ."H ". $this->getDate()->format('Y-m-d') . " -  ". $this->getCustomer()->getName() ;
+    }
 
     public function getId(): ?int
     {
