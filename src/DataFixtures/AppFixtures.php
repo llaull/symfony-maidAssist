@@ -41,8 +41,8 @@ class AppFixtures extends Fixture
             
             $manager->persist($user);
 
-
-            for ($i=0; $i < 8; $i++) { 
+            // add customers
+            for ($i=0; $i < 3; $i++) { 
                 $customer = new Customer();
                 $customer->setName($faker->name);
                 $customer->setUser($user);
@@ -54,6 +54,7 @@ class AppFixtures extends Fixture
 
                 $random = random_int(1, 22);
                 
+                // add jobs
                 for ($y=0; $y < $random; $y++) { 
                     $intervention = new Intervention();
                     $intervention->setCustomer($customer);
